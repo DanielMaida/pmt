@@ -1,11 +1,8 @@
-#include <iostream>
-#include <string>
-#include <vector>
+#include "kmp.h"
 
 using namespace std;
 
 vector <int> preTable(1000);
-
 
 void createTable(string pattern) {
     int j = 0;
@@ -51,12 +48,50 @@ int kmp(string text, string pattern) {
     return occ;
 }
 
-int main(){
-    
-    string text = "abxabcabcabyabc";
-    string pattern = "abc";
-
-    int occ = kmp(text, pattern);
-    cout << occ << endl;
-    return 0;
+int callKmpForEachFile (string pattern, std::vector<std::string> textFiles,int printOnlyCount)
+{
+  int totalOccurrencesInFile = 0;
+       
+  for(std::vector<string>::iterator it = textFiles.begin(); it != textFiles.end(); ++it)
+  {    
+    std::string textPath = *it;
+    std::ifstream textFile(textPath.c_str());
+    if(textFile.is_open())
+    {
+      for(string textLine; getline(textFile, textLine);)
+      {
+        int lineOccurrences = 0;
+        lineOccurrences += kmp(textLine, pattern);
+        if(lineOccurrences > 0 && printOnlyCount != 1)
+        {
+          printf("%s\n", textLine.c_str());
+        }
+        totalOccurrencesInFile += lineOccurrences;                 
+      }
+    }
+  }
+  return totalOccurrencesInFile;    
 }
+
+int callKmp(string pattern, std::vector<std::string> textFiles, int patternIsPatternPath, int printOnlyCount)
+{
+  int totalOccurrences = 0;
+  
+  if(patternIsPatternPath!=0)
+  {
+    std::ifstream patternFile(pattern.c_str());             
+    if(patternFile.is_open())
+    {    
+      for(std::string patternLine; getline(patternFile,patternLine);)
+      {
+        totalOccurrences += callKmpForEachFile(patternLine, textFiles, printOnlyCount);                                                             
+      }          
+    }  
+  }
+  else
+  {
+    totalOccurrences = callKmpForEachFile(pattern, textFiles,printOnlyCount);              
+  }
+  return totalOccurrences;
+}
+

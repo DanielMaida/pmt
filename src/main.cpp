@@ -2,6 +2,26 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <string.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <glob.h>
+#include <vector>
+
+#include "kmp.h"
+
+using namespace std;
+
+std::vector<std::string> glob(const std::string& pat){
+    glob_t glob_result;
+    glob(pat.c_str(),GLOB_TILDE,NULL,&glob_result);
+    vector<string> ret;
+    for(unsigned int i=0;i<glob_result.gl_pathc;++i){
+        ret.push_back(string(glob_result.gl_pathv[i]));
+    }
+    globfree(&glob_result);
+    return ret;
+}
 
 int main (int argc, char **argv)
 {
@@ -96,6 +116,7 @@ int main (int argc, char **argv)
     }
   else
     {
+      std::vector<std::string> files = glob(filePath);
       //call algorithms
       if(strcmp(algorithmArgument,"")!=0)
         {
@@ -103,10 +124,17 @@ int main (int argc, char **argv)
           if(strcmp(algorithmArgument, "kmp")==0)
             {
               //call kmp
+              printf("found %d occurrences\n", callKmp((strcmp(patternFilePath,"")!=0)?patternFilePath:pattern,
+                                                      files,
+                                                      (strcmp(patternFilePath,"")),
+                                                      countFlag
+                                                      ));
+              
             }
           else if(strcmp(algorithmArgument, "sellers")==0)
             {
-              //call sellers          
+              //call sellers
+                        
             }
           else
             {
@@ -115,7 +143,21 @@ int main (int argc, char **argv)
         }
       else
         {
-          //choose algorithm based on something
+          //call algorithms based on something
+          if(strcmp(editArgument,"")!=0)
+            {
+              //call sellers
+                         
+            }
+          else
+            {
+              //call kmp
+              printf("found %d occurrences\n", callKmp((strcmp(patternFilePath,"")!=0)?patternFilePath:pattern,
+                                                      files,
+                                                      (strcmp(patternFilePath,"")),
+                                                      countFlag
+                                                      ));              
+            }         
         }
     }
    
