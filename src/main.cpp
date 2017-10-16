@@ -7,8 +7,10 @@
 #include <string>
 #include <glob.h>
 #include <vector>
+#include <iostream>
 
 #include "kmp.h"
+#include "sellers.h"
 
 using namespace std;
 
@@ -28,6 +30,7 @@ int main (int argc, char **argv)
   int c;
   int countFlag = 0;
   int helpFlag = 0;
+  int error;
   char const *editArgument = "";
   char const *algorithmArgument = "";
   char const *pattern = "";
@@ -64,7 +67,10 @@ int main (int argc, char **argv)
           break;
 
         case 'e':
-          editArgument = optarg;
+          {
+            editArgument = optarg;
+            error = stoi(editArgument, nullptr);
+          }
           break;
 
         case 'a':
@@ -134,6 +140,12 @@ int main (int argc, char **argv)
           else if(strcmp(algorithmArgument, "sellers")==0)
             {
               //call sellers
+             printf("found %d occurrences\n", callSellers((strcmp(patternFilePath,"")!=0)?patternFilePath:pattern,
+                                                      files,
+                                                      (strcmp(patternFilePath,"")),
+                                                      countFlag,
+                                                      error
+                                                      ));
                         
             }
           else
@@ -147,7 +159,12 @@ int main (int argc, char **argv)
           if(strcmp(editArgument,"")!=0)
             {
               //call sellers
-                         
+              printf("found %d occurrences\n", callSellers((strcmp(patternFilePath,"")!=0)?patternFilePath:pattern,
+                                                      files,
+                                                      (strcmp(patternFilePath,"")),
+                                                      countFlag,
+                                                      error
+                                                      ));                         
             }
           else
             {
@@ -157,7 +174,7 @@ int main (int argc, char **argv)
                                                       (strcmp(patternFilePath,"")),
                                                       countFlag
                                                       ));              
-            }         
+            }
         }
     }
    

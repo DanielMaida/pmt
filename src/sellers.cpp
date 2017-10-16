@@ -1,5 +1,4 @@
-#include <iostream>
-#include <string>
+#include "sellers.h"
 
 using namespace std;
 
@@ -30,4 +29,51 @@ int sellers(string text, string pat, int error){
         }
     }
     return occ;
+}
+
+int callSellersForEachFile (string pattern, std::vector<std::string> textFiles,int printOnlyCount, int error)
+{
+  int totalOccurrencesInFile = 0;
+       
+  for(std::vector<string>::iterator it = textFiles.begin(); it != textFiles.end(); ++it)
+  {    
+    std::string textPath = *it;
+    std::ifstream textFile(textPath.c_str());
+    if(textFile.is_open())
+    {
+      for(string textLine; getline(textFile, textLine);)
+      {
+        int lineOccurrences = 0;
+        lineOccurrences += sellers(textLine, pattern,error);
+        if(lineOccurrences > 0 && printOnlyCount != 1)
+        {
+          printf("%s\n", textLine.c_str());
+        }
+        totalOccurrencesInFile += lineOccurrences;                 
+      }
+    }
+  }
+  return totalOccurrencesInFile;    
+}
+
+int callSellers(string pattern, std::vector<std::string> textFiles, int patternIsPatternPath, int printOnlyCount, int error)
+{
+  int totalOccurrences = 0;
+  
+  if(patternIsPatternPath!=0)
+  {
+    std::ifstream patternFile(pattern.c_str());             
+    if(patternFile.is_open())
+    {    
+      for(std::string patternLine; getline(patternFile,patternLine);)
+      {
+        totalOccurrences += callSellersForEachFile(patternLine, textFiles, printOnlyCount, error);                                                             
+      }          
+    }  
+  }
+  else
+  {
+    totalOccurrences = callSellersForEachFile(pattern, textFiles,printOnlyCount,error);              
+  }
+  return totalOccurrences;
 }
