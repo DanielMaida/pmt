@@ -11,9 +11,7 @@ int * newCol(int *col, string pat, char a){
         if( a == pat[i-1])
             phi = 0;
             ncol[i] = min(min(col[i]+1, ncol[i-1]+1), col[i-1]+phi);
-        cout << ncol[i] << ",";
     }
-    cout << endl;
     return ncol;
 }
 
@@ -32,12 +30,4 @@ int sellers(string text, string pat, int error){
         }
     }
     return occ;
-}
-
-int main(){
-    string txt = "abracadabra";
-    string pat = "abra";
-    int err = 2;
-    int occ = sellers(txt, pat, err);
-    return 0;
 }
